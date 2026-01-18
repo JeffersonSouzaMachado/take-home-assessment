@@ -43,8 +43,8 @@ These are the core requirements that must be implemented for the assessment to b
 - [V] Complete `lib/providers/market_data_provider.dart`
 - [V] Add `loadMarketData()` method that calls the API service
 - [V] Manage loading state (`_isLoading`)
-- [V] Manage data state (`_marketData`)
-- [V] Use `notifyListeners()` to update UI
+- [x] Manage data state (`_marketData`)
+- [x] Use `notifyListeners()` to update UI
 
 #### 4. UI Screen 
 
