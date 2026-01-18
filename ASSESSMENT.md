@@ -57,10 +57,10 @@ These are the core requirements that must be implemented for the assessment to b
 
 #### 5. Code Quality
 
-- [ ] Write clean, readable code
-- [ ] Follow Flutter/Dart best practices
-- [ ] Ensure proper null safety
-- [ ] Code compiles and runs without errors
+- [x] Write clean, readable code
+- [x] Follow Flutter/Dart best practices
+- [x] Ensure proper null safety
+- [x] Code compiles and runs without errors
 
 ---
 
@@ -81,10 +81,10 @@ These are enhancements that demonstrate advanced skills but are not required for
 #### Functionality Enhancements
 
 - [ ] Navigate to detail view when item is tapped
-- [ ] Display additional fields (volume, market cap, etc.)
+- [x] Display additional fields (volume, market cap, etc.)
 - [ ] Add search/filter functionality
 - [ ] Sort by price, change, or symbol
-- [ ] Implement WebSocket for real-time updates
+- [x] Implement WebSocket for real-time updates
 
 #### Code Quality Enhancements
 
