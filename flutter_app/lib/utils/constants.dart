@@ -19,9 +19,16 @@ class AppConstants {
   static const String analyticsEndpoint = '/analytics';
   static const String portfolioEndpoint = '/portfolio';
 
+  //Analytics
   static const String analyticsOverview = '$baseServerUrl/analytics/overview';
   static const String analyticsTrends = '$baseServerUrl/analytics/trends';
   static const String analyticsSentiment = '$baseServerUrl/analytics/sentiment';
+
+  //Portfolio
+  static const String portfolioSummary = '$baseServerUrl/portfolio/summary';
+  static const String portfolioHoldings = '$baseServerUrl/portfolio/holdings';
+  static const String portfolioPerformance = '$baseServerUrl/portfolio/performance';
+  static const String portfolioTransactions = '$baseServerUrl/portfolio/transactions';
   
   // Timeframes
   static const List<String> timeframes = ['1h', '4h', '1d', '7d', '30d'];

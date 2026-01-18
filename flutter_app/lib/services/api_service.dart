@@ -74,16 +74,30 @@ class ApiService {
     return _getJson(AppConstants.analyticsSentiment);
   }
 
+  Future<Map<String, dynamic>> getPortfolioSummary() async {
+    return _getJson(AppConstants.portfolioSummary);
+  }
+
+  Future<Map<String, dynamic>> getPortfolioHoldings() async {
+    return _getJson(AppConstants.portfolioHoldings);
+  }
+
+  Future<Map<String, dynamic>> getPortfolioPerformance(String timeframe) async {
+    final url = '${AppConstants.portfolioPerformance}?timeframe=$timeframe';
+    return _getJson(url);
+  }
+
   Future<Map<String, dynamic>> _getJson(String url) async {
     final uri = Uri.parse(url);
 
     try {
-      final response = await http
-          .get(uri, headers: const {'Accept': 'application/json'})
-          .timeout(const Duration(seconds: 10));
+      final response = await http.get(uri, headers: const {
+        'Accept': 'application/json'
+      }).timeout(const Duration(seconds: 10));
 
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw HttpException('Server returned status code ${response.statusCode}');
+        throw HttpException(
+            'Server returned status code ${response.statusCode}');
       }
 
       final decoded = jsonDecode(response.body);
@@ -98,7 +112,8 @@ class ApiService {
 
       return decoded;
     } on SocketException catch (e) {
-      throw Exception('Network error: Unable to reach the server. ${e.message}');
+      throw Exception(
+          'Network error: Unable to reach the server. ${e.message}');
     } on TimeoutException {
       throw Exception('Request timeout: The server did not respond in time.');
     } on FormatException catch (e) {
@@ -110,4 +125,42 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> addPortfolioTransaction(
+      Map<String, dynamic> transaction) async {
+    final uri = Uri.parse(AppConstants.portfolioTransactions);
+
+    try {
+      final response = await http
+          .post(
+            uri,
+            headers: const {'Content-Type': 'application/json'},
+            body: jsonEncode(transaction),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw HttpException(
+            'Server returned status code ${response.statusCode}');
+      }
+
+      final decoded = jsonDecode(response.body);
+
+      if (decoded is! Map<String, dynamic>) {
+        throw const FormatException('Response is not a JSON object');
+      }
+
+      return decoded;
+    } on SocketException catch (e) {
+      throw Exception(
+          'Network error: Unable to reach the server. ${e.message}');
+    } on TimeoutException {
+      throw Exception('Request timeout: The server did not respond in time.');
+    } on FormatException catch (e) {
+      throw Exception('Invalid response format: ${e.message}');
+    } on HttpException catch (e) {
+      throw Exception('HTTP error: ${e.message}');
+    } catch (e) {
+      throw Exception('Unexpected error while adding transaction: $e');
+    }
+  }
 }
