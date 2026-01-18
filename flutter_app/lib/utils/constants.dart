@@ -3,8 +3,12 @@ class AppConstants {
   // API Configuration
   // Note: For Android emulator, use 10.0.2.2 instead of localhost
   // For iOS simulator, localhost works fine
-  static const String baseUrl = 'http://localhost:3000/api';
-  static const String wsUrl = 'ws://localhost:3000';
+  // static const String baseUrl = 'http://localhost:3000/api';
+  // static const String wsUrl = 'ws://localhost:3000';
+
+  //Own server
+  static const String baseServerUrl = 'http://192.168.1.102:3000/api';
+  static const String wsServerUrl = 'ws://192.168.1.102:3000';
   
   // For Android emulator, uncomment these:
   // static const String baseUrl = 'http://10.0.2.2:3000/api';
@@ -14,6 +18,10 @@ class AppConstants {
   static const String marketDataEndpoint = '/market-data';
   static const String analyticsEndpoint = '/analytics';
   static const String portfolioEndpoint = '/portfolio';
+
+  static const String analyticsOverview = '$baseServerUrl/analytics/overview';
+  static const String analyticsTrends = '$baseServerUrl/analytics/trends';
+  static const String analyticsSentiment = '$baseServerUrl/analytics/sentiment';
   
   // Timeframes
   static const List<String> timeframes = ['1h', '4h', '1d', '7d', '30d'];
