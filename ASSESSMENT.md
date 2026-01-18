@@ -26,25 +26,25 @@ These are the core requirements that must be implemented for the assessment to b
 
 #### 1. API Integration 
 
-- [ ] Complete `getMarketData()` method in `lib/services/api_service.dart`
-- [ ] Call `GET /api/market-data` endpoint
-- [ ] Return parsed JSON data
-- [ ] Basic error handling (catch exceptions)
+- [V] Complete `getMarketData()` method in `lib/services/api_service.dart`
+- [V] Call `GET /api/market-data` endpoint
+- [V] Return parsed JSON data
+- [V] Basic error handling (catch exceptions)
 
 #### 2. Data Model 
 
-- [ ] Implement `MarketData` class in `lib/models/market_data_model.dart`
-- [ ] Include required fields: symbol, price, change24h, changePercent24h
-- [ ] Add `fromJson` factory constructor
-- [ ] Ensure proper null safety
+- [V] Implement `MarketData` class in `lib/models/market_data_model.dart`
+- [V] Include required fields: symbol, price, change24h, changePercent24h
+- [V] Add `fromJson` factory constructor
+- [V] Ensure proper null safety
 
 #### 3. State Management 
 
-- [ ] Complete `lib/providers/market_data_provider.dart`
-- [ ] Add `loadMarketData()` method that calls the API service
-- [ ] Manage loading state (`_isLoading`)
-- [ ] Manage data state (`_marketData`)
-- [ ] Use `notifyListeners()` to update UI
+- [V] Complete `lib/providers/market_data_provider.dart`
+- [V] Add `loadMarketData()` method that calls the API service
+- [V] Manage loading state (`_isLoading`)
+- [V] Manage data state (`_marketData`)
+- [V] Use `notifyListeners()` to update UI
 
 #### 4. UI Screen 
 
