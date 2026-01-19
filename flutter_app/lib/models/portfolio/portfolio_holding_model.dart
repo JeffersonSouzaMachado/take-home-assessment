@@ -22,10 +22,10 @@ class PortfolioHolding {
       id: (json['id'] ?? '').toString(),
       symbol: (json['symbol'] ?? '').toString(),
       quantity: _toDouble(json['quantity']),
-      averagePrice: _toDouble(json['averagePrice']),
-      currentPrice: _toDouble(json['currentPrice']),
+      averagePrice: _toDouble(json['averagePrice'] ?? json['average_price']),
+      currentPrice: _toDouble(json['currentPrice'] ?? json['current_price']),
       pnl: _toDouble(json['pnl']),
-      pnlPercent: _toDouble(json['pnlPercent']),
+      pnlPercent: _toDouble(json['pnlPercent'] ?? json['pnl_percent']),
     );
   }
 

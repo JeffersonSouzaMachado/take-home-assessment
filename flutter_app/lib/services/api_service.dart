@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:pulsenow_flutter/services/build_uri.dart';
 import '../utils/constants.dart';
 
 class ApiService {
@@ -62,33 +64,39 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getAnalyticsOverview() async {
-    return _getJson(AppConstants.analyticsOverview);
+    return _getJson(AppConstants.analyticsOverviewPath);
   }
 
   Future<Map<String, dynamic>> getAnalyticsTrends(String timeframe) async {
-    final url = '${AppConstants.analyticsTrends}?timeframe=$timeframe';
-    return _getJson(url);
+    const url = AppConstants.analyticsTrendsPath;
+    return _getJson(url, queryParameters: {'timeframe': timeframe});
   }
 
   Future<Map<String, dynamic>> getAnalyticsSentiment() async {
-    return _getJson(AppConstants.analyticsSentiment);
+    return _getJson(AppConstants.analyticsSentimentPath);
   }
 
   Future<Map<String, dynamic>> getPortfolioSummary() async {
-    return _getJson(AppConstants.portfolioSummary);
+    return _getJson(AppConstants.portfolioSummaryPath);
   }
 
   Future<Map<String, dynamic>> getPortfolioHoldings() async {
-    return _getJson(AppConstants.portfolioHoldings);
+    return _getJson(AppConstants.portfolioHoldingsPath);
   }
 
-  Future<Map<String, dynamic>> getPortfolioPerformance(String timeframe) async {
-    final url = '${AppConstants.portfolioPerformance}?timeframe=$timeframe';
-    return _getJson(url);
+  Future<Map<String, dynamic>> getPortfolioPerformance(String timeframe) {
+    return _getJson(
+      AppConstants.portfolioPerformancePath,
+      queryParameters: {'timeframe': timeframe},
+    );
   }
 
-  Future<Map<String, dynamic>> _getJson(String url) async {
-    final uri = Uri.parse(url);
+  Future<Map<String, dynamic>> _getJson(
+      String path, {
+        Map<String, String>? queryParameters,
+      }) async {
+    final uri = buildUri(path, queryParameters: queryParameters);
+    debugPrint('[ApiService] GET -> $uri');
 
     try {
       final response = await http.get(uri, headers: const {
@@ -125,9 +133,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> addPortfolioTransaction(
-      Map<String, dynamic> transaction) async {
-    final uri = Uri.parse(AppConstants.portfolioTransactions);
+  Future<Map<String, dynamic>> addPortfolioTransaction(Map<String, dynamic> transaction) async {
+    final uri = buildUri(AppConstants.portfolioTransactionsPath);
 
     try {
       final response = await http
