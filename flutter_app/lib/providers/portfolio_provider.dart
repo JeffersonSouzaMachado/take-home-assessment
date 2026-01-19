@@ -25,11 +25,6 @@ class PortfolioProvider with ChangeNotifier {
 
   String? get error => _error;
 
-  // TODO: Implement methods
-  // - loadPortfolioSummary()
-  // - loadHoldings()
-  // - loadPerformance(String timeframe)
-  // - addTransaction(Map<String, dynamic> transaction)
 
   String _mapErrorToUserMessage(Object error) {
     final msg = error.toString();
@@ -136,8 +131,7 @@ class PortfolioProvider with ChangeNotifier {
       debugPrintStack(stackTrace: stackTrace);
       _error = _mapErrorToUserMessage(e);
 
-      // ✅ importante: NÃO dar throw aqui, senão o reload da tela pode morrer
-      // (deixa performance falhar sem travar summary/holdings)
+
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -29,7 +29,6 @@ class WebSocketService {
   void connect({bool autoReconnect = true}) {
     _shouldReconnect = autoReconnect;
 
-    // Prevent duplicate connections.
     if (_channel != null) return;
 
     _open();
@@ -115,7 +114,6 @@ class WebSocketService {
     try {
       _channel?.sink.close();
     } catch (_) {
-      // Ignore.
     }
 
     _channel = null;
@@ -126,7 +124,6 @@ class WebSocketService {
     if (_reconnectTimer != null) return;
     if (_dataController.isClosed || _connectionController.isClosed) return;
 
-    // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s (cap)
     final delaySeconds = _backoffSeconds(_reconnectAttempt);
     _reconnectAttempt = (_reconnectAttempt + 1).clamp(0, 30);
 
@@ -140,7 +137,7 @@ class WebSocketService {
 
   int _backoffSeconds(int attempt) {
     final cappedAttempt = attempt.clamp(0, 5);
-    final value = 1 << cappedAttempt; // 1,2,4,8,16,32
+    final value = 1 << cappedAttempt;
     return value > 30 ? 30 : value;
   }
 

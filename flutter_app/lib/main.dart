@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pulsenow_flutter/theme/app_theme.dart';
 
 import 'screens/home_screen.dart';
 import 'providers/market_data_provider.dart';
@@ -23,10 +24,9 @@ class PulseNowApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'PulseNow',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
       ),

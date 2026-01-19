@@ -19,11 +19,7 @@ class AnalyticsProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  
-  // TODO: Implement methods
-  // - loadOverview()
-  // - loadTrends(String timeframe)
-  // - loadSentiment()
+
   
   Future<void> loadOverview() async {
     _isLoading = true;

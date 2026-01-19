@@ -10,7 +10,6 @@ class AnalyticsSentiment {
   });
 
   factory AnalyticsSentiment.fromJson(Map<String, dynamic> json) {
-    // backend atual: { score, newsSentiment, socialSentiment, ... }
 
     double pos = 0, neu = 0, neg = 0;
 
@@ -29,7 +28,6 @@ class AnalyticsSentiment {
       neg += _toDouble(social['negative']);
     }
 
-    // Se por algum motivo não vierem os objetos, usa score (0..100) como fallback
     if ((pos + neu + neg) == 0) {
       final score = _toDouble(json['score']);
       pos = score.clamp(0, 100);
