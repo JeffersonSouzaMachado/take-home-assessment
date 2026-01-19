@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pulsenow_flutter/models/portfolio/portfolio_holding_model.dart';
 import 'package:pulsenow_flutter/models/portfolio/portfolio_performance_model.dart';
 import 'package:pulsenow_flutter/models/portfolio/portfolio_summary_model.dart';
+import 'package:pulsenow_flutter/models/portfolio/portfolio_transaction_request.dart';
 import 'package:pulsenow_flutter/services/api_service.dart';
 
 class PortfolioProvider with ChangeNotifier {
@@ -116,15 +117,18 @@ class PortfolioProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addTransaction(Map<String, dynamic> transaction) async {
+  Future<void> addTransaction(PortfolioTransactionRequest transaction) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _apiService.addPortfolioTransaction(transaction);
-      await loadPortfolioSummary();
-      await loadHoldings();
+      await _apiService.addPortfolioTransaction(transaction.toJson());
+
+      await Future.wait([
+        loadPortfolioSummary(),
+        loadHoldings(),
+      ]);
     } catch (e, stackTrace) {
       debugPrint('PortfolioProvider.addTransaction failed: $e');
       debugPrintStack(stackTrace: stackTrace);

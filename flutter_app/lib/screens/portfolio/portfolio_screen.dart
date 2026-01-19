@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pulsenow_flutter/screens/portfolio/transaction/add_transaction_screen.dart';
 
 import '../../providers/portfolio_provider.dart';
 import '../../widgets/common/error_state.dart';
@@ -44,12 +45,30 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         final performance = provider.performance;
         final holdings = provider.holdings;
 
-        final isInitialLoading = isLoading && summary == null && holdings.isEmpty && performance == null;
+        final isInitialLoading = isLoading &&
+            summary == null &&
+            holdings.isEmpty &&
+            performance == null;
 
         return Scaffold(
           appBar: AppBar(
             title: const Text('Portfolio'),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: 'Add transaction',
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        final result = await Navigator.of(context).push<bool>(
+                          MaterialPageRoute(
+                              builder: (_) => const AddTransactionScreen()),
+                        );
+                        if (result == true) {
+                          await _reload();
+                        }
+                      },
+              ),
               IconButton(
                 onPressed: isLoading ? null : _reload,
                 icon: const Icon(Icons.refresh),
@@ -63,7 +82,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (error != null && summary == null && holdings.isEmpty && performance == null) {
+              if (error != null &&
+                  summary == null &&
+                  holdings.isEmpty &&
+                  performance == null) {
                 return ErrorState(
                   title: 'Unable to load portfolio',
                   message: error,
@@ -76,7 +98,9 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 child: ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    const Text('Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                    const Text('Summary',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 8),
                     if (summary != null)
                       PortfolioSummaryCard(summary: summary)
@@ -87,19 +111,22 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           child: Text('No summary data.'),
                         ),
                       ),
-
                     const SizedBox(height: 16),
                     Row(
                       children: [
                         const Expanded(
-                          child: Text('Performance', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                          child: Text('Performance',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w800)),
                         ),
                         TimeframeSelector(
                           value: _timeframe,
                           isDisabled: isLoading,
                           onChanged: (v) async {
                             setState(() => _timeframe = v);
-                            await context.read<PortfolioProvider>().loadPerformance(v);
+                            await context
+                                .read<PortfolioProvider>()
+                                .loadPerformance(v);
                           },
                         ),
                       ],
@@ -114,11 +141,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           child: Text('No performance data.'),
                         ),
                       ),
-
                     const SizedBox(height: 16),
-                    const Text('Holdings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                    const Text('Holdings',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
                     const SizedBox(height: 8),
-
                     if (holdings.isEmpty)
                       const Card(
                         child: Padding(
@@ -128,7 +155,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                       )
                     else
                       ...holdings.map((h) => PortfolioHoldingTile(holding: h)),
-
                     if (error != null) ...[
                       const SizedBox(height: 16),
                       Text(error, style: const TextStyle(color: Colors.red)),

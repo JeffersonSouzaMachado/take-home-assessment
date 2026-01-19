@@ -26,12 +26,6 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
   }
 
   @override
-  void dispose() {
-    Provider.of<MarketDataProvider>(context, listen: false).stopRealtimeUpdates();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Consumer<MarketDataProvider>(
       builder: (context, provider, child) {
@@ -52,21 +46,9 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
             title: const Text('Market Data'),
             actions: [
               IconButton(
-                tooltip: provider.isRealtimeEnabled
-                    ? (provider.isRealtimeConnected ? 'Live: ON' : 'Live: Reconnecting')
-                    : 'Live: OFF',
-                onPressed: () => provider.toggleRealtimeUpdates(),
-                icon: Icon(
-                  provider.isRealtimeEnabled
-                      ? (provider.isRealtimeConnected ? Icons.wifi : Icons.wifi_tethering_error)
-                      : Icons.wifi_off,
-                ),
-              ),
-              IconButton(
                 tooltip: 'Refresh',
-                onPressed: provider.isLoading
-                    ? null
-                    : () => provider.loadMarketData(),
+                onPressed:
+                    provider.isLoading ? null : () => provider.loadMarketData(),
                 icon: const Icon(Icons.refresh),
               ),
             ],
@@ -88,26 +70,32 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
                 onRefresh: () => provider.loadMarketData(),
                 child: data.isEmpty
                     ? ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: const [
-                    SizedBox(height: 160),
-                    Center(child: Text('No market data available.')),
-                  ],
-                )
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: const [
+                          SizedBox(height: 160),
+                          Center(child: Text('No market data available.')),
+                        ],
+                      )
                     : ListView.separated(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  separatorBuilder: (_, __) =>
-                  const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    return MarketDataTile(item: data[index]);
-                  },
-                ),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          return MarketDataTile(item: data[index]);
+                        },
+                      ),
               );
             },
           ),
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    Provider.of<MarketDataProvider>(context, listen: false)
+        .stopRealtimeUpdates();
+    super.dispose();
   }
 }
