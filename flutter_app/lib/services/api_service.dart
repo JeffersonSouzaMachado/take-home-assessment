@@ -79,12 +79,24 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getMarketHistory(
-      String symbol, String timeframe, int limit) async {
+      String symbol,
+      String timeframe,
+      int limit,
+      ) async {
     final encoded = Uri.encodeComponent(symbol);
-    final url =
-        '${AppConstants.baseUrl}/market-data/$encoded/history?timeframe=$timeframe&limit=$limit';
-    return _getJson(url);
+
+    // ✅ path RELATIVO, SEM /api
+    final path = '/market-data/$encoded/history';
+
+    return _getJson(
+      path,
+      queryParameters: {
+        'timeframe': timeframe,
+        'limit': limit.toString(),
+      },
+    );
   }
+
 
   Future<Map<String, dynamic>> _getJson(
     String path, {

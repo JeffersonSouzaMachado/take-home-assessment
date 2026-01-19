@@ -30,14 +30,17 @@ class MarketDataProvider with ChangeNotifier {
   bool get isRealtimeConnected => _isRealtimeConnected;
 
   String _selectedSymbol = 'BTC/USD';
+
   String get selectedSymbol => _selectedSymbol;
 
   final Map<String, List<MarketHistoryPoint>> _historyCache = {};
-  List<MarketHistoryPoint> get selectedHistory => _historyCache[_selectedSymbol] ?? [];
+
+  List<MarketHistoryPoint> get selectedHistory =>
+      _historyCache[_selectedSymbol] ?? [];
 
   bool _isHistoryLoading = false;
-  bool get isHistoryLoading => _isHistoryLoading;
 
+  bool get isHistoryLoading => _isHistoryLoading;
 
   Future<void> loadMarketData() async {
     _isLoading = true;
@@ -81,7 +84,7 @@ class MarketDataProvider with ChangeNotifier {
     );
 
     _wsDataSubscription ??= _wsService.stream.listen(
-          (event) {
+      (event) {
         if (!_isRealtimeConnected) {
           _isRealtimeConnected = true;
           notifyListeners();
@@ -107,7 +110,6 @@ class MarketDataProvider with ChangeNotifier {
         notifyListeners();
       },
     );
-
   }
 
   void stopRealtimeUpdates() {
@@ -149,10 +151,10 @@ class MarketDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setSelectedSymbol(String symbol) async {
+  Future<void> selectSymbol(String symbol) async {
     _selectedSymbol = symbol;
     notifyListeners();
-    await loadHistoryForSelected();
+    await loadHistoryForSelected(); // usa selectedSymbol internamente
   }
 
   Future<void> loadHistoryForSelected({String timeframe = '1h', int limit = 100}) async {
@@ -160,12 +162,11 @@ class MarketDataProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiService.getMarketHistory(_selectedSymbol, timeframe, limit);
+      final symbol = selectedSymbol;
+      final response = await _apiService.getMarketHistory(symbol, timeframe, limit);
       final data = response['data'];
 
       List list;
-
-      // backend pode mandar { data: [...] } ou { data: { data: [...] } }
       if (data is List) {
         list = data;
       } else if (data is Map<String, dynamic> && data['data'] is List) {
@@ -179,16 +180,12 @@ class MarketDataProvider with ChangeNotifier {
           .map((e) => MarketHistoryPoint.fromJson(e))
           .toList();
 
-      _historyCache[_selectedSymbol] = points;
-    } catch (e) {
-      // se quiser, setar _error
-      debugPrint('loadHistoryForSelected failed: $e');
+      _historyCache[symbol] = points;
     } finally {
       _isHistoryLoading = false;
       notifyListeners();
     }
   }
-
 
 
   @override

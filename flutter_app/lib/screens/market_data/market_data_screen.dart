@@ -55,33 +55,34 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
                           ),
                           const Spacer(),
                           IconButton(
-                              onPressed: () =>
-                                  provider.toggleRealtimeUpdates(),
+                              onPressed: () => provider.toggleRealtimeUpdates(),
                               icon: provider.isRealtimeEnabled
                                   ? (provider.isRealtimeConnected
-                                  ? const Icon(
-                                Icons.wifi,
-                                color: Colors.green,
-                              )
+                                      ? const Icon(
+                                          Icons.wifi,
+                                          color: Colors.green,
+                                        )
+                                      : const Icon(
+                                          Icons.wifi_tethering_error,
+                                          color: Colors.yellow,
+                                        ))
                                   : const Icon(
-                                Icons.wifi_tethering_error,
-                                color: Colors.yellow,
-                              ))
-                                  : const Icon(
-                                Icons.wifi_off,
-                                color: Colors.red,
-                              )),
+                                      Icons.wifi_off,
+                                      color: Colors.red,
+                                    )),
                         ],
                       ),
                       Container(
-                          width: double.infinity,
-                          height: 300,
-                          decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.3),
-                              borderRadius: const BorderRadius.all(
-                                  Radius.circular(20))),
-                          child: MarketPriceChart(
-                              points: market.selectedHistory),
+                        width: double.infinity,
+                        height: 300,
+                        decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20))),
+                        child: provider.isHistoryLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : MarketPriceChart(
+                                points: provider.selectedHistory),
                       )
                     ],
                   ),
@@ -104,20 +105,25 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
                         onRefresh: () => provider.loadMarketData(),
                         child: data.isEmpty
                             ? ListView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: const [
-                            SizedBox(height: 160),
-                            Center(
-                                child: Text('No market data available.')),
-                          ],
-                        )
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                children: const [
+                                  SizedBox(height: 160),
+                                  Center(
+                                      child: Text('No market data available.')),
+                                ],
+                              )
                             : ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return MarketDataTile(item: data[index]);
-                          },
-                        ),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount: data.length,
+                                itemBuilder: (context, index) {
+                                  final item = data[index];
+                                  return InkWell(
+                                    onTap: () =>
+                                        provider.selectSymbol(item.symbol),
+                                    child: MarketDataTile(item: item),
+                                  );
+                                },
+                              ),
                       );
                     },
                   ),
