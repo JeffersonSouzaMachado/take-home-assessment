@@ -1,19 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:pulsenow_flutter/models/analytics/analytics_overview_model.dart';
+import 'package:pulsenow_flutter/models/analytics/analytics_sentiment_model.dart';
+import 'package:pulsenow_flutter/models/analytics/analytics_trends_model.dart';
 import '../services/api_service.dart';
 
 class AnalyticsProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
 
   AnalyticsOverview? _overview;
-  Map<String, dynamic>? _trends;
-  Map<String, dynamic>? _sentiment;
+  AnalyticsTrends? _trends;
+  AnalyticsSentiment? _sentiment;
   bool _isLoading = false;
   String? _error;
 
   AnalyticsOverview? get overview => _overview;
-  Map<String, dynamic>? get trends => _trends;
-  Map<String, dynamic>? get sentiment => _sentiment;
+  AnalyticsTrends? get trends => _trends;
+  AnalyticsSentiment? get sentiment => _sentiment;
+
   bool get isLoading => _isLoading;
   String? get error => _error;
   
@@ -29,7 +32,7 @@ class AnalyticsProvider with ChangeNotifier {
     
     try {
       final response = await _apiService.getAnalyticsOverview();
-      _overview = response['data'];
+      _overview = AnalyticsOverview.fromJson(response['data']);
     } catch (e, stackTrace) {
       debugPrint('AnalyticsProvider.loadOverview failed: $e');
       debugPrintStack(stackTrace: stackTrace);
@@ -46,7 +49,7 @@ class AnalyticsProvider with ChangeNotifier {
 
     try {
       final response = await _apiService.getAnalyticsTrends(timeframe);
-      _trends = response['data'];
+      _trends = AnalyticsTrends.fromJson(response['data']);
     } catch (e, stackTrace) {
       debugPrint('AnalyticsProvider.loadTrends failed: $e');
       debugPrintStack(stackTrace: stackTrace);
@@ -64,7 +67,7 @@ class AnalyticsProvider with ChangeNotifier {
 
     try {
       final response = await _apiService.getAnalyticsSentiment();
-      _sentiment = response['data'];
+      _sentiment = AnalyticsSentiment.fromJson(response['data']);
     } catch (e, stackTrace) {
       debugPrint('AnalyticsProvider.loadSentiment failed: $e');
       debugPrintStack(stackTrace: stackTrace);
