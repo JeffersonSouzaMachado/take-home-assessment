@@ -36,11 +36,16 @@ class MarketDataProvider with ChangeNotifier {
   final Map<String, List<MarketHistoryPoint>> _historyCache = {};
 
   List<MarketHistoryPoint> get selectedHistory =>
-      _historyCache[_selectedSymbol] ?? [];
+      _historyCache['${selectedSymbol}|${_selectedTimeframe}'] ?? const [];
+
 
   bool _isHistoryLoading = false;
 
   bool get isHistoryLoading => _isHistoryLoading;
+
+  String _selectedTimeframe = '1h';
+  String get selectedTimeframe => _selectedTimeframe;
+
 
   Future<void> loadMarketData() async {
     _isLoading = true;
@@ -164,9 +169,10 @@ class MarketDataProvider with ChangeNotifier {
     try {
       final symbol = selectedSymbol;
       final response = await _apiService.getMarketHistory(symbol, timeframe, limit);
-      final data = response['data'];
 
+      final data = response['data'];
       List list;
+
       if (data is List) {
         list = data;
       } else if (data is Map<String, dynamic> && data['data'] is List) {
@@ -180,11 +186,19 @@ class MarketDataProvider with ChangeNotifier {
           .map((e) => MarketHistoryPoint.fromJson(e))
           .toList();
 
-      _historyCache[symbol] = points;
+      _historyCache['$symbol|$timeframe'] = points;
     } finally {
       _isHistoryLoading = false;
       notifyListeners();
     }
+  }
+
+
+  Future<void> setTimeframe(String timeframe) async {
+    if (_selectedTimeframe == timeframe) return;
+    _selectedTimeframe = timeframe;
+    notifyListeners();
+    await loadHistoryForSelected(timeframe: timeframe);
   }
 
 

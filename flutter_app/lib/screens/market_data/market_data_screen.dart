@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pulsenow_flutter/widgets/market/market_data_tile.dart';
 import 'package:pulsenow_flutter/widgets/common/error_state.dart';
 import 'package:pulsenow_flutter/widgets/market/market_price_chart.dart';
+import 'package:pulsenow_flutter/widgets/market/time_fram_button.dart';
 import '../../providers/market_data_provider.dart';
 
 class MarketDataScreen extends StatefulWidget {
@@ -72,18 +73,53 @@ class _MarketDataScreenState extends State<MarketDataScreen> {
                                     )),
                         ],
                       ),
-                      Container(
-                        width: double.infinity,
-                        height: 300,
-                        decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20))),
-                        child: provider.isHistoryLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : MarketPriceChart(
-                                points: provider.selectedHistory),
-                      )
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 40),
+                        child: Container(
+                          width: double.infinity,
+                          height: 300,
+                          decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20))),
+                          child: provider.isHistoryLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : MarketPriceChart(
+                                  points: provider.selectedHistory),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TimeframeButton(
+                            label: '1H',
+                            value: '1h',
+                            selected: provider.selectedTimeframe == '1h',
+                            onTap: () => provider.setTimeframe('1h'),
+                          ),
+                          const SizedBox(width: 8),
+                          TimeframeButton(
+                            label: '24H',
+                            value: '24h',
+                            selected: provider.selectedTimeframe == '24h',
+                            onTap: () => provider.setTimeframe('24h'),
+                          ),
+                          const SizedBox(width: 8),
+                          TimeframeButton(
+                            label: '1M',
+                            value: '1m',
+                            selected: provider.selectedTimeframe == '1m',
+                            onTap: () => provider.setTimeframe('1m'),
+                          ),
+                          const SizedBox(width: 8),
+                          TimeframeButton(
+                            label: '1Y',
+                            value: '1y',
+                            selected: provider.selectedTimeframe == '1y',
+                            onTap: () => provider.setTimeframe('1y'),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

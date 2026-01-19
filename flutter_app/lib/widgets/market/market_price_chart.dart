@@ -32,20 +32,66 @@ class MarketPriceChart extends StatelessWidget {
       height: 220,
       child: LineChart(
         LineChartData(
-          minY: minY,
-          maxY: maxY,
-          gridData: const FlGridData(show: true),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: (maxY - minY) / 4,
+          ),
           borderData: FlBorderData(show: false),
-          titlesData: const FlTitlesData(show: false),
+          titlesData: FlTitlesData(
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 44,
+                interval: (maxY - minY) / 4,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toStringAsFixed(0),
+                    style: const TextStyle(fontSize: 11),
+                  );
+                },
+              ),
+            ),
+          ),
           lineBarsData: [
             LineChartBarData(
               spots: spots,
               isCurved: true,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(show: false),
               barWidth: 2,
+              dotData: const FlDotData(show: false),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary.withOpacity(0.25),
+                    Theme.of(context).colorScheme.primary.withOpacity(0.02),
+                  ],
+                ),
+              ),
             ),
           ],
+          lineTouchData: LineTouchData(
+            enabled: true,
+            touchTooltipData: LineTouchTooltipData(
+              tooltipPadding: const EdgeInsets.all(8),
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((s) {
+                  return LineTooltipItem(
+                    s.y.toStringAsFixed(2),
+                    const TextStyle(fontWeight: FontWeight.w700),
+                  );
+                }).toList();
+              },
+            ),
+          ),
         ),
       ),
     );
