@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:pulsenow_flutter/models/market_history_point.dart';
 import 'dart:async';
 import '../services/api_service.dart';
 import '../services/websocket_service.dart';
@@ -25,7 +26,17 @@ class MarketDataProvider with ChangeNotifier {
   String? get error => _error;
 
   bool get isRealtimeEnabled => _isRealtimeEnabled;
+
   bool get isRealtimeConnected => _isRealtimeConnected;
+
+  String _selectedSymbol = 'BTC/USD';
+  String get selectedSymbol => _selectedSymbol;
+
+  final Map<String, List<MarketHistoryPoint>> _historyCache = {};
+  List<MarketHistoryPoint> get selectedHistory => _historyCache[_selectedSymbol] ?? [];
+
+  bool _isHistoryLoading = false;
+  bool get isHistoryLoading => _isHistoryLoading;
 
 
   Future<void> loadMarketData() async {
@@ -70,15 +81,33 @@ class MarketDataProvider with ChangeNotifier {
     );
 
     _wsDataSubscription ??= _wsService.stream.listen(
-      (data) {
-        final update = MarketData.fromJson(data);
+          (event) {
+        if (!_isRealtimeConnected) {
+          _isRealtimeConnected = true;
+          notifyListeners();
+        }
+
+        if (event['type'] != 'market_update') return;
+
+        final payload = event['data'];
+        if (payload is! Map<String, dynamic>) return;
+
+        final update = MarketData.fromJson(payload);
         _upsert(update);
       },
       onError: (e, stackTrace) {
+        _isRealtimeConnected = false;
+        notifyListeners();
+
         debugPrint('MarketDataProvider WebSocket data error: $e');
         if (stackTrace != null) debugPrintStack(stackTrace: stackTrace);
       },
+      onDone: () {
+        _isRealtimeConnected = false;
+        notifyListeners();
+      },
     );
+
   }
 
   void stopRealtimeUpdates() {
@@ -119,6 +148,48 @@ class MarketDataProvider with ChangeNotifier {
     _marketData = copy;
     notifyListeners();
   }
+
+  Future<void> setSelectedSymbol(String symbol) async {
+    _selectedSymbol = symbol;
+    notifyListeners();
+    await loadHistoryForSelected();
+  }
+
+  Future<void> loadHistoryForSelected({String timeframe = '1h', int limit = 100}) async {
+    _isHistoryLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.getMarketHistory(_selectedSymbol, timeframe, limit);
+      final data = response['data'];
+
+      List list;
+
+      // backend pode mandar { data: [...] } ou { data: { data: [...] } }
+      if (data is List) {
+        list = data;
+      } else if (data is Map<String, dynamic> && data['data'] is List) {
+        list = data['data'] as List;
+      } else {
+        list = const [];
+      }
+
+      final points = list
+          .whereType<Map<String, dynamic>>()
+          .map((e) => MarketHistoryPoint.fromJson(e))
+          .toList();
+
+      _historyCache[_selectedSymbol] = points;
+    } catch (e) {
+      // se quiser, setar _error
+      debugPrint('loadHistoryForSelected failed: $e');
+    } finally {
+      _isHistoryLoading = false;
+      notifyListeners();
+    }
+  }
+
+
 
   @override
   void dispose() {

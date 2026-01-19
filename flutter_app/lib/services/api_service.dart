@@ -78,10 +78,18 @@ class ApiService {
     );
   }
 
+  Future<Map<String, dynamic>> getMarketHistory(
+      String symbol, String timeframe, int limit) async {
+    final encoded = Uri.encodeComponent(symbol);
+    final url =
+        '${AppConstants.baseUrl}/market-data/$encoded/history?timeframe=$timeframe&limit=$limit';
+    return _getJson(url);
+  }
+
   Future<Map<String, dynamic>> _getJson(
-      String path, {
-        Map<String, String>? queryParameters,
-      }) async {
+    String path, {
+    Map<String, String>? queryParameters,
+  }) async {
     final uri = buildUri(path, queryParameters: queryParameters);
     debugPrint('[ApiService] GET -> $uri');
 
@@ -120,7 +128,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> addPortfolioTransaction(Map<String, dynamic> transaction) async {
+  Future<Map<String, dynamic>> addPortfolioTransaction(
+      Map<String, dynamic> transaction) async {
     final uri = buildUri(AppConstants.portfolioTransactionsPath);
 
     try {
@@ -145,7 +154,6 @@ class ApiService {
 
       debugPrint('POST status: ${response.statusCode}');
       debugPrint('POST body: ${response.body}');
-
 
       return decoded;
     } on SocketException catch (e) {

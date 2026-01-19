@@ -18,7 +18,7 @@ class MarketData {
     return MarketData(
       symbol: (json['symbol'] ?? '').toString(),
       price: _toDouble(json['price']),
-      change24h: _toDouble(json['change24h']),
+      change24h: _toDouble(json['change24h'] ?? json['changePercent24h']),
       changePercent24h: _toDouble(json['changePercent24h']),
       volume: _toDouble(json['volume']),
     );

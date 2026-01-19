@@ -28,44 +28,41 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Error handling
 app.use(errorHandler);
 
-// Create HTTP server
 const server = http.createServer(app);
 
-// WebSocket server for real-time updates
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
   console.log('WebSocket client connected');
-  
-  // Send initial market data
-  const initialData = {
+  const symbols = ['BTC/USD', 'ETH/USD', 'SOL/USD', 'ADA/USD'];
+
+
+  const makeUpdate = (symbol) => ({
     type: 'market_update',
     data: {
-      symbol: 'BTC/USD',
-      price: 43250.50,
-      change24h: 2.5,
-      volume: 1250000000,
-      timestamp: new Date().toISOString()
-    }
-  };
-  ws.send(JSON.stringify(initialData));
+      symbol,
+      price: (100 + Math.random() * 1000).toFixed(2),
+      change24h: (Math.random() * 10 - 5).toFixed(2),
+      volume: (100000000 + Math.random() * 2000000000).toFixed(0),
+      timestamp: new Date().toISOString(),
+    },
+  });
 
-  // Simulate real-time updates every 2 seconds
+  for (const s of symbols) {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(makeUpdate(s)));
+    }
+  }
+
+  let idx = 0;
   const interval = setInterval(() => {
-    const update = {
-      type: 'market_update',
-      data: {
-        symbol: 'BTC/USD',
-        price: (43250 + Math.random() * 1000 - 500).toFixed(2),
-        change24h: (2.5 + Math.random() * 2 - 1).toFixed(2),
-        volume: (1250000000 + Math.random() * 100000000).toFixed(0),
-        timestamp: new Date().toISOString()
-      }
-    };
-    
+    const symbol = symbols[idx % symbols.length];
+    idx++;
+
+    const update = makeUpdate(symbol);
+
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(update));
     }
@@ -81,6 +78,7 @@ wss.on('connection', (ws) => {
     clearInterval(interval);
   });
 });
+
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

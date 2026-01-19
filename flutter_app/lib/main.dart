@@ -26,7 +26,7 @@ class PulseNowApp extends StatelessWidget {
         title: 'PulseNow',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.dark,
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
       ),

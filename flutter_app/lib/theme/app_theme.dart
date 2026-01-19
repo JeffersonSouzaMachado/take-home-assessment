@@ -1,63 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:pulsenow_flutter/theme/app_colors.dart';
 
 class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    primaryColor: const Color(0xFF2563EB), // azul
-    scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-    cardColor: Colors.white,
-    dividerColor: Colors.grey.shade300,
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-      elevation: 0,
-      centerTitle: true,
-    ),
-
-    textTheme: const TextTheme(
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      bodyMedium: TextStyle(fontSize: 14),
-    ),
-
+    fontFamily: 'Inter',
+    scaffoldBackgroundColor: AppColors.lightBackground,
     colorScheme: const ColorScheme.light(
-      primary: Color(0xFF2563EB),
-      secondary: Color(0xFF22C55E),
-      error: Color(0xFFEF4444),
+      primary: AppColors.primary,
+      secondary: AppColors.primary,
+      background: AppColors.lightBackground,
+      surface: AppColors.lightSurface,
     ),
-
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Color(0xFF2563EB),
+    cardTheme: CardThemeData(
+      color: AppColors.lightSurface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 2,
+    ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightText),
+      headlineMedium: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.lightText),
+      bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.lightText),
+      bodyMedium: TextStyle(fontSize: 14, color: AppColors.lightText),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.lightSurface,
+      foregroundColor: AppColors.lightText,
+      elevation: 0,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
     ),
   );
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: const Color(0xFF3B82F6),
-    scaffoldBackgroundColor: const Color(0xFF0F172A),
-    cardColor: const Color(0xFF1E293B),
-    dividerColor: Colors.grey.shade700,
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF0F172A),
-      foregroundColor: Colors.white,
-      elevation: 0,
-      centerTitle: true,
-    ),
-
-    textTheme: const TextTheme(
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      bodyMedium: TextStyle(fontSize: 14),
-    ),
-
+    fontFamily: 'Inter',
+    scaffoldBackgroundColor: AppColors.darkBackground,
     colorScheme: const ColorScheme.dark(
-      primary: Color(0xFF3B82F6),
-      secondary: Color(0xFF22C55E),
-      error: Color(0xFFF87171),
+      primary: AppColors.primary,
+      secondary: AppColors.primary,
+      background: AppColors.darkBackground,
+      surface: AppColors.darkSurface,
     ),
-
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Color(0xFF3B82F6),
+    cardTheme: CardThemeData(
+      color: AppColors.darkSurface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+    ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(
+          fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.darkText),
+      headlineMedium: TextStyle(
+          fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.darkText),
+      bodyLarge: TextStyle(
+          fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.darkText),
+      bodyMedium: TextStyle(fontSize: 14, color: AppColors.darkText),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.darkSurface,
+      foregroundColor: AppColors.darkText,
+      elevation: 0,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
     ),
   );
 }
