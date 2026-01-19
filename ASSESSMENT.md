@@ -48,12 +48,12 @@ These are the core requirements that must be implemented for the assessment to b
 
 #### 4. UI Screen 
 
-- [ ] Create `lib/screens/market_data_screen.dart`
-- [ ] Display list of crypto symbols using `ListView` or `ListView.builder`
-- [ ] Show symbol and price for each item
-- [ ] Show 24h change with color coding (green for positive, red for negative)
-- [ ] Display loading indicator while `isLoading` is true
-- [ ] Display error message when error occurs
+- [x] Create `lib/screens/market_data_screen.dart`
+- [x] Display list of crypto symbols using `ListView` or `ListView.builder`
+- [x] Show symbol and price for each item
+- [x] Show 24h change with color coding (green for positive, red for negative)
+- [x] Display loading indicator while `isLoading` is true
+- [x] Display error message when error occurs
 
 #### 5. Code Quality
 
@@ -70,12 +70,12 @@ These are enhancements that demonstrate advanced skills but are not required for
 
 #### UI/UX Enhancements
 
-- [ ] Implement pull-to-refresh functionality
-- [ ] Format prices as currency (e.g., $43,250.50)
-- [ ] Format percentages with + or - sign (e.g., +2.5%)
-- [ ] Add empty state when no data is available
-- [ ] Improve error UI with retry button
-- [ ] Add smooth animations/transitions
+- [x] Implement pull-to-refresh functionality
+- [x] Format prices as currency (e.g., $43,250.50)
+- [x] Format percentages with + or - sign (e.g., +2.5%)
+- [x] Add empty state when no data is available
+- [x] Improve error UI with retry button
+- [x] Add smooth animations/transitions
 - [ ] Make the UI more visually appealing
 
 #### Functionality Enhancements
@@ -88,7 +88,7 @@ These are enhancements that demonstrate advanced skills but are not required for
 
 #### Code Quality Enhancements
 
-- [ ] Add comprehensive error handling
+- [x] Add comprehensive error handling
 - [ ] Implement proper error types/classes
 - [ ] Add input validation
 - [ ] Optimize list rendering (use `ListView.builder` with proper itemExtent)
