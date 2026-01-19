@@ -1,7 +1,7 @@
 import 'package:pulsenow_flutter/utils/constants.dart';
 
 Uri buildUri(String path, {Map<String, String>? queryParameters}) {
-  final base = Uri.parse(AppConstants.baseServerUrl);
+  final base = Uri.parse(AppConstants.baseUrl);
 
   return Uri(
     scheme: base.scheme,

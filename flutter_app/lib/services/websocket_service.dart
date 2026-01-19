@@ -58,7 +58,7 @@ class WebSocketService {
 
   void _open() {
     try {
-      final uri = Uri.parse(AppConstants.wsServerUrl);
+      final uri = Uri.parse(AppConstants.wsUrl);
       _channel = WebSocketChannel.connect(uri);
       _setConnected(true);
 

@@ -50,14 +50,16 @@ class PortfolioProvider with ChangeNotifier {
 
       if (data is! Map<String, dynamic>) {
         throw const FormatException(
-            'Portfolio summary "data" is not a JSON object');
+            'Portfolio summary "data" is not an object');
       }
 
       _summary = PortfolioSummary.fromJson(data);
-    } catch (e, stackTrace) {
-      debugPrint('PortfolioProvider.loadPortfolioSummary failed: $e');
-      debugPrintStack(stackTrace: stackTrace);
+      debugPrint(
+          'SUMMARY UPDATED -> ${_summary?.totalValue} | ${_summary?.lastUpdated}');
+    } catch (e, st) {
       _error = _mapErrorToUserMessage(e);
+      debugPrint('loadPortfolioSummary failed: $e');
+      debugPrintStack(stackTrace: st);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -101,16 +103,41 @@ class PortfolioProvider with ChangeNotifier {
       final response = await _apiService.getPortfolioPerformance(timeframe);
       final data = response['data'];
 
-      if (data is! Map<String, dynamic>) {
+      List points;
+
+      if (data is List) {
+        points = data;
+      } else if (data is Map<String, dynamic>) {
+        final inner = data['data'];
+        if (inner is List) {
+          points = inner;
+        } else {
+          throw const FormatException(
+              'Portfolio performance inner "data" is not a list');
+        }
+      } else {
         throw const FormatException(
-            'Portfolio performance "data" is not a JSON object');
+            'Portfolio performance "data" is neither list nor object');
       }
 
-      _performance = PortfolioPerformance.fromJson(data);
+      final values = points
+          .whereType<Map<String, dynamic>>()
+          .map((e) => e['value'])
+          .map((v) =>
+              v is num ? v.toDouble() : double.tryParse(v.toString()) ?? 0.0)
+          .toList();
+
+      _performance = PortfolioPerformance(
+        timeframe: timeframe,
+        values: values,
+      );
     } catch (e, stackTrace) {
       debugPrint('PortfolioProvider.loadPerformance failed: $e');
       debugPrintStack(stackTrace: stackTrace);
       _error = _mapErrorToUserMessage(e);
+
+      // ✅ importante: NÃO dar throw aqui, senão o reload da tela pode morrer
+      // (deixa performance falhar sem travar summary/holdings)
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -129,10 +156,15 @@ class PortfolioProvider with ChangeNotifier {
         loadPortfolioSummary(),
         loadHoldings(),
       ]);
+
+      if (_error != null) {
+        throw Exception(_error);
+      }
     } catch (e, stackTrace) {
       debugPrint('PortfolioProvider.addTransaction failed: $e');
       debugPrintStack(stackTrace: stackTrace);
       _error = _mapErrorToUserMessage(e);
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

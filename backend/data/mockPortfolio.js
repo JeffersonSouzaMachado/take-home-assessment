@@ -82,29 +82,53 @@ let transactions = [
 ];
 
 const mockPortfolio = {
-  getSummary: () => {
-    const totalValue = holdings.reduce((sum, h) => sum + h.value, 0);
-    const totalPnl = holdings.reduce((sum, h) => sum + h.pnl, 0);
-    const totalPnlPercent = (totalPnl / (totalValue - totalPnl)) * 100;
+getSummary: () => {
+  mockPortfolio.getHoldings();
+
+  const totalValue = holdings.reduce((sum, h) => sum + h.value, 0);
+  const totalPnl = holdings.reduce((sum, h) => sum + h.pnl, 0);
+
+  const totalCost = totalValue - totalPnl;
+  const totalPnlPercent = totalCost === 0 ? 0 : (totalPnl / totalCost) * 100;
+
+  return {
+    totalValue: totalValue.toFixed(2),
+    totalPnl: totalPnl.toFixed(2),
+    totalPnlPercent: totalPnlPercent.toFixed(2),
+    totalHoldings: holdings.length,
+    lastUpdated: new Date().toISOString(),
+  };
+},
+
+
+getHoldings: () => {
+  holdings = holdings.map((holding) => {
+    const randomFactor = 1 + (Math.random() - 0.5) * 0.001;
+    const currentPrice = holding.currentPrice * randomFactor;
+
+    const value = holding.quantity * currentPrice;
+    const pnl = (currentPrice - holding.averagePrice) * holding.quantity;
+    const pnlPercent = holding.averagePrice === 0 ? 0 : ((currentPrice - holding.averagePrice) / holding.averagePrice) * 100;
 
     return {
-      totalValue: totalValue.toFixed(2),
-      totalPnl: totalPnl.toFixed(2),
-      totalPnlPercent: totalPnlPercent.toFixed(2),
-      totalHoldings: holdings.length,
-      lastUpdated: new Date().toISOString()
+      ...holding,
+      currentPrice,
+      value,
+      pnl,
+      pnlPercent,
+      lastUpdated: new Date().toISOString(),
     };
-  },
+  });
 
-  getHoldings: () => {
-    // Update current prices with slight variation
-    return holdings.map(h => ({
-      ...h,
-      currentPrice: h.currentPrice * (1 + (Math.random() - 0.5) * 0.001),
-      value: h.quantity * (h.currentPrice * (1 + (Math.random() - 0.5) * 0.001)),
-      lastUpdated: new Date().toISOString()
-    }));
-  },
+  const totalValue = holdings.reduce((sum, h) => sum + h.value, 0);
+  holdings = holdings.map((h) => ({
+    ...h,
+    allocation: totalValue === 0 ? 0 : (h.value / totalValue) * 100,
+  }));
+
+  return holdings;
+},
+
 
   getPerformance: (timeframe) => {
     const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
@@ -134,14 +158,67 @@ const mockPortfolio = {
     };
   },
 
-  addTransaction: (transaction) => {
-    const newTransaction = {
-      id: (transactions.length + 1).toString(),
-      ...transaction
-    };
-    transactions.push(newTransaction);
-    return newTransaction;
+addTransaction: (transaction) => {
+  const newTransaction = {
+    id: (transactions.length + 1).toString(),
+    ...transaction,
+    quantity: Number(transaction.quantity),
+    price: Number(transaction.price),
+  };
+
+  transactions.push(newTransaction);
+
+  const { type, symbol, quantity, price } = newTransaction;
+
+  const idx = holdings.findIndex((h) => h.symbol === symbol);
+
+  if (type === 'buy') {
+    if (idx >= 0) {
+      const h = holdings[idx];
+      const oldQty = Number(h.quantity);
+      const oldAvg = Number(h.averagePrice);
+
+      const newQty = oldQty + quantity;
+      const newAvg = ((oldQty * oldAvg) + (quantity * price)) / newQty;
+
+      holdings[idx] = {
+        ...h,
+        quantity: newQty,
+        averagePrice: newAvg,
+      };
+    } else {
+      holdings.push({
+        id: (holdings.length + 1).toString(),
+        symbol,
+        quantity,
+        averagePrice: price,
+        currentPrice: price,
+        value: quantity * price,
+        pnl: 0,
+        pnlPercent: 0,
+        allocation: 0,
+        lastUpdated: new Date().toISOString(),
+      });
+    }
   }
+
+  if (type === 'sell') {
+    if (idx >= 0) {
+      const h = holdings[idx];
+      const oldQty = Number(h.quantity);
+      const newQty = oldQty - quantity;
+
+      if (newQty <= 0) {
+        holdings.splice(idx, 1);
+      } else {
+        holdings[idx] = { ...h, quantity: newQty };
+      }
+    }
+  }
+
+  return newTransaction;
+},
+
 };
 
 module.exports = { mockPortfolio };

@@ -1,28 +1,26 @@
 // Mock analytics data for assessment
 const mockAnalytics = {
-  getOverview: () => {
-    return {
-      totalMarketCap: 2500000000000,
-      totalVolume24h: 85000000000,
-      activeMarkets: 1250,
-      topGainer: {
-        symbol: 'SOL/USD',
-        change: 5.3,
-        price: 98.25
-      },
-      topLoser: {
-        symbol: 'ETH/USD',
-        change: -1.2,
-        price: 2650.75
-      },
-      marketDominance: {
-        btc: 42.5,
-        eth: 28.3,
-        others: 29.2
-      },
-      lastUpdated: new Date().toISOString()
-    };
-  },
+getOverview: () => {
+  const cap = 2500000000000 + (Math.random() - 0.5) * 100000000000; // +-100B
+  const vol = 85000000000 + (Math.random() - 0.5) * 10000000000;   // +-10B
+
+  const solPrice = 98.25 + (Math.random() - 0.5) * 2;  // +-2
+  const solChange = 5.3 + (Math.random() - 0.5) * 1;   // +-1
+
+  const ethPrice = 2650.75 + (Math.random() - 0.5) * 50; // +-50
+  const ethChange = -1.2 + (Math.random() - 0.5) * 1;    // +-1
+
+  return {
+    totalMarketCap: cap,
+    totalVolume24h: vol,
+    activeMarkets: 1250 + Math.floor((Math.random() - 0.5) * 10),
+    topGainer: { symbol: 'SOL/USD', change: solChange, price: solPrice },
+    topLoser: { symbol: 'ETH/USD', change: ethChange, price: ethPrice },
+    marketDominance: { btc: 42.5, eth: 28.3, others: 29.2 },
+    lastUpdated: new Date().toISOString()
+  };
+},
+
 
   getTrends: (timeframe) => {
     const trends = [];
@@ -50,28 +48,46 @@ const mockAnalytics = {
     };
   },
 
-  getSentiment: () => {
-    return {
-      overall: {
-        score: 65, // 0-100
-        label: 'Bullish',
-        change24h: 5
-      },
-      indicators: {
-        fearGreedIndex: 68,
-        socialSentiment: 72,
-        technicalAnalysis: 60,
-        onChainMetrics: 65
-      },
-      breakdown: [
-        { category: 'Social Media', score: 75, weight: 0.3 },
-        { category: 'News', score: 58, weight: 0.25 },
-        { category: 'Technical', score: 60, weight: 0.25 },
-        { category: 'On-Chain', score: 65, weight: 0.2 }
-      ],
-      lastUpdated: new Date().toISOString()
-    };
-  }
+getSentiment: () => {
+  // score 0..100 com leve variação
+  const score = Math.round(73 + (Math.random() - 0.5) * 10); // 68..78
+  const fearGreedIndex = Math.round(67 + (Math.random() - 0.5) * 12); // 61..73
+
+  // helper: clamp 0..100
+  const clamp = (n) => Math.max(0, Math.min(100, n));
+
+  // Cria 3 partes que somam 100 (positivo/neutro/negativo)
+  const makeSplit = (basePos, baseNeu) => {
+    const pos = clamp(Math.round(basePos + (Math.random() - 0.5) * 10));
+    const neu = clamp(Math.round(baseNeu + (Math.random() - 0.5) * 10));
+    let neg = 100 - pos - neu;
+
+    // se estourar, ajusta para caber
+    if (neg < 0) neg = 0;
+    const sum = pos + neu + neg;
+    // normaliza caso tenha sum != 100 por clamp/ajustes
+    const fix = 100 - sum;
+    return { positive: pos + fix, neutral: neu, negative: neg };
+  };
+
+  const newsSentiment = makeSplit(62, 25);
+  const socialSentiment = makeSplit(58, 30);
+
+  let overallSentiment = 'Neutral';
+  if (score >= 70) overallSentiment = 'Bullish';
+  else if (score <= 40) overallSentiment = 'Bearish';
+
+  return {
+    overallSentiment,
+    score,
+    fearGreedIndex,
+    newsSentiment,
+    socialSentiment,
+    lastUpdated: new Date().toISOString(),
+  };
+},
+
+
 };
 
 module.exports = { mockAnalytics };

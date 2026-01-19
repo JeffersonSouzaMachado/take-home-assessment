@@ -7,7 +7,7 @@ import 'package:pulsenow_flutter/services/build_uri.dart';
 import '../utils/constants.dart';
 
 class ApiService {
-  static const String baseUrl = AppConstants.baseServerUrl;
+  static const String baseUrl = AppConstants.baseUrl;
 
   // TODO: Implement getMarketData() method
   // This should call GET /api/market-data and return the response
@@ -155,6 +155,10 @@ class ApiService {
       if (decoded is! Map<String, dynamic>) {
         throw const FormatException('Response is not a JSON object');
       }
+
+      debugPrint('POST status: ${response.statusCode}');
+      debugPrint('POST body: ${response.body}');
+
 
       return decoded;
     } on SocketException catch (e) {

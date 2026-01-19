@@ -12,8 +12,8 @@ class AppConstants {
 
 
   //Own server
-  static const String baseServerUrl = 'http://192.168.1.102:3000/api';
-  static const String wsServerUrl = 'ws://192.168.1.102:3000';
+  static const String baseUrl = 'http://192.168.1.100:3000/api';
+  static const String wsUrl = 'ws://192.168.1.100:3000';
 
 
   // API Endpoints
